@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Quiz</title>
+</head>
+
+<body>
+    <!--Container-->
+    <div class="bg-pink-300 flex flex-col h-screen w-full">
+        <!--Header-->
+        <div class="text-center lg:w-full lg:m-auto">
+            <h1 class="block text-5xl font-bold shadow-2xl bg-pink-500 text-pink-900 p-2">Quiz</h1>            
+        </div><!--/Header-->
+
+        <!--Main-->
+        <div class="bg-pink-100 rounded-xl shadow-2xl m-auto w-2/3 h-max border-2 border-pink-500">
+            <!--Pregunta-->
+            <div id="pregunta" class="text-lg md:text-6xl text-center h-16 md:h-24"></div>
+            <!--Opciones-->
+            <div id="opciones" class="grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-8"></div>
+            <!--Temporizador-->
+            <div id="temporizador" class="text-center text-lg bg-pink-300 mx-auto my-6 w-24 rounded-lg"></div>
+        </div><!--/Main-->
+        <!--Nº de pregunta-->
+        <div class="mx-auto my-8 bg-pink-100 p-2 rounded-xl" >
+            <p id="numPregunta" class="text-pink-900"></p>
+        </div>
+
+    </div><!--/Container-->
+
+    <script>
+        // Arrays de preguntas, opciones y respuestas
+        let preguntas = [
+            "¿Cuál es el río más largo del mundo?",
+            "¿Quién pintó la Mona Lisa?",
+            "¿Cuál es el metal más abundante en la corteza terrestre?",
+            "¿Qué famoso físico desarrolló la teoría de la relatividad?",
+            "¿En qué país se encuentra la Torre Eiffel?",
+            "¿Cuál es el océano más grande del mundo?",
+            "¿Quién escribió la famosa obra 'Don Quijote de la Mancha'?",
+            "¿Cuál es el planeta más grande del sistema solar?",
+            "¿Qué año comenzó la Primera Guerra Mundial?",
+            "¿Quién fue el primer presidente de Estados Unidos?"
+        ];
+
+        let opciones = [
+            ["Yangtsé", "Amazonas", "Misisipi", "Nilo"],
+            ["Pablo Picasso", "Leonardo da Vinci", "Vincent van Gogh", "Michelangelo"],
+            ["Oro", "Hierro", "Plata", "Aluminio"],
+            ["Galileo Galilei", "Isaac Newton", "Stephen Hawking", "Albert Einstein"],
+            ["Estados Unidos", "Italia", "Francia", "Reino Unido"],
+            ["Océano Antártico", "Océano Atlántico", "Océano Índico", "Océano Pacífico"],
+            ["Fyodor Dostoevsky", "William Shakespeare", "Gustave Flaubert", "Miguel de Cervantes"],
+            ["Saturno", "Júpiter", "Neptuno", "Urano"],
+            ["1920", "1939", "1918", "1914"],
+            ["Abraham Lincoln", "John Adams", "George Washington", "Thomas Jefferson"]
+        ];
+
+
+        let respuestasCorrectas = [
+            "Nilo",
+            "Leonardo da Vinci",
+            "Hierro",
+            "Albert Einstein",
+            "Francia",
+            "Océano Pacífico",
+            "Miguel de Cervantes",
+            "Júpiter",
+            "1914",
+            "George Washington"
+        ];
+
+        // Array de colores para las respuestas
+        let colores=["blue", "orange", "yellow", "green"];
+
+        // Variables para el juego
+        let preguntaActual = 0;
+        let puntos = 0;
+        let tempInterval; // Variable global para el temporizador
+        let segundos=31; // Variable global para los segundos del temporizador
+        let nextPregunta; // Variable global que guarda el timeout para que se pase a la siguiente pregunta
+        let pregunta = document.getElementById("pregunta");
+        let opcionesDiv = document.getElementById("opciones");
+        let temporizadorDiv = document.getElementById("temporizador");
+        let numPregunta=document.getElementById("numPregunta");
+        let tiempoTotalRespuesta=0;
+
+
+        // Función para mostrar la pregunta y opciones
+        function mostrarPregunta() {
+            let preguntaTexto = preguntas[preguntaActual];
+            let opcionesRespuesta = opciones[preguntaActual];
+
+            pregunta.textContent = preguntaTexto;
+            pregunta.className="text-pink-900 bg-pink-300 h-20 md:h-28 text-center text-m md:text-4xl font-bold  m-4 md:mt-10 rounded-xl";
+            pregunta.style.display = "flex";
+            pregunta.style.alignItems = "center";
+            pregunta.style.justifyContent = "center";
+
+            // Limpiar opciones anteriores
+            opcionesDiv.innerHTML = "";
+
+            // Mostrar nuevas opciones
+            let i=0;
+            for (let opcion of opcionesRespuesta) {
+                let botonOpcion = document.createElement("div");
+                botonOpcion.textContent = opcion;
+                botonOpcion.className="bg-"+colores[i]+"-400 border-2 border-"+colores[i]+"-300 h-16 text-center text-lg md:text-2xl font-bold text-white m-2 rounded-xl hover:bg-"+colores[i]+"-300 hover:border-"+colores[i]+"-600";
+                botonOpcion.style.display = "flex";
+                botonOpcion.style.alignItems = "center";
+                botonOpcion.style.justifyContent = "center";
+                // Utilizando una función anónima para capturar el valor de 'opcion'
+                botonOpcion.addEventListener("click", comprobarRespuesta);
+                opcionesDiv.appendChild(botonOpcion);
+                i++;
+            }
+            numPregunta.innerHTML=(preguntaActual+1)+"/"+10;
+
+            segundos=31;
+            temporizador(segundos); // Resetear el temporizador para cada pregunta
+            
+        }
+
+        // Función para comprobar respuesta y avanzar
+        function comprobarRespuesta() {
+            let respuestaCorrecta=respuestasCorrectas[preguntaActual];
+            if (this.textContent==respuestaCorrecta) {
+                this.style.backgroundColor="green";
+                this.style.borderColor="green";
+                puntos++;
+            }
+            else {
+                this.style.backgroundColor="red";
+                this.style.borderColor="red";
+            }
+
+            // Avanzar a la siguiente pregunta o finalizar el juego
+            if (preguntaActual < preguntas.length-1) {
+                clearInterval(tempInterval);
+                for(let e of this.parentNode.children){
+                    e.removeEventListener("click", comprobarRespuesta);
+                }
+                nextPregunta=setTimeout(mostrarPregunta, 700);
+                preguntaActual++;
+            }
+            else {
+                finalizarJuego();
+            }
+        }
+
+
+        // Función para finalizar el juego
+        function finalizarJuego() {
+            // Preguntar al usuario si quiere volver a jugar
+            let respuesta = confirm("¡Juego finalizado!\nPuntos totales: "+ puntos+"\n¿Quieres volver a jugar?");
+            if (respuesta) {
+                // Reiniciar el juego si el usuario quiere volver a jugar
+                preguntaActual = 0;
+                puntos = 0;
+                mostrarPregunta(); 
+            }
+            else {
+                alert("¡Gracias por jugar!"); // Finalizar el juego si el usuario no quiere volver a jugar
+                // Si el usuario no quiere volver a jugar, limpiar la pantalla
+                
+                pregunta.textContent = "";
+                opcionesDiv.innerHTML = "";
+                clearInterval(tempInterval);
+                temporizadorDiv.textContent = "";
+
+                // Mostrar solo los puntos
+                pregunta.textContent = "Puntos totales: " + puntos + "/10";
+
+                opcionesDiv.textContent = "Tiempo total respuestas: " + tiempoTotalRespuesta + " s";
+                opcionesDiv.className="flex text-pink-900 bg-pink-400 h-20 md:h-28 text-center text-m md:text-4xl font-bold  m-4 md:mt-10 rounded-xl ";
+                opcionesDiv.style.display = "flex";
+                opcionesDiv.style.alignItems = "center";
+                opcionesDiv.style.justifyContent = "center";
+            }
+        }
+
+        // Temporizador
+        function temporizador(segundos) {
+            // Definir la función del temporizador
+            function actualizarTemporizador() {
+                segundos--;
+                temporizadorDiv.textContent = segundos;
+
+                if (segundos == 0) {
+                    clearInterval(tempInterval);
+                    finalizarJuego(); // Llamar a la función finalizarJuego cuando el temporizador llega a cero
+                }
+            }
+
+            // Llamar a la función del temporizador inicialmente
+            actualizarTemporizador();
+
+            // Establecer el temporizador para actualizar cada segundo
+            tempInterval = setInterval(function () {
+                // Actualizar tiempo total de respuesta
+                tiempoTotalRespuesta++;
+                actualizarTemporizador();
+            }, 1000);
+        }
+
+        // Iniciar el juego 
+        mostrarPregunta();
+
+    </script>
+</body>
+</html>

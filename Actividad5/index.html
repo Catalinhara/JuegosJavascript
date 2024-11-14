@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatangGames</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <!--Container-->
+    <div class="flex flex-col bg-gray-200 h-full">
+        <!--Header-->
+        <div style="background-image: url(Images/titlebg.jpg); background-size: cover;" class="sticky w-full h-36">
+            <img class="mx-auto" src="Images/logo.png" alt="logo">
+        </div><!--/Header-->
+
+        <!--Main-->
+        <div class="flex flex-col w-full p-50 my-5">
+            <!--Lista de juegos-->
+            <div style="background-image: url(Images/fondo.jpg); background-repeat: repeat;" class="flex flex-col lg:flex-row">
+                <!--Quiz-->
+                <div  class="flex w-full p-10 text-center lg:w-1/3">
+                    <div class="flex flex-col max-w-sm m-auto h-full bg-pink-400 border-4 border-pink-200 rounded overflow-hidden shadow-lg">
+                        <img class="w-40 h-40 m-auto" src="Images/quiz.jpeg" alt="Quiz">
+                        <div class="px-6 py-4">
+                          <div class="font-bold text-xl mb-2">Quiz</div>
+                          <p class="text-gray-700 text-base h-60">
+                            "Quiz" es un juego de preguntas y respuestas en el que los jugadores ponen a prueba su conocimiento 
+                            en diferentes temas. Por lo general, se presentan una serie de preguntas y el jugador debe seleccionar 
+                            la respuesta correcta de entre varias opciones. El objetivo es acumular la mayor cantidad de puntos al 
+                            responder correctamente la mayor cantidad de preguntas posible. 
+                          </p>
+                        </div>
+                        <div class="px-6 pt-4 pb-2">
+                            <a href="quiz.html" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Juega ahora!</a>
+                        </div>
+                      </div>
+                </div><!--/Quiz-->
+
+                <!--Othello-->
+                <div  class="flex w-full p-10 text-center lg:w-1/3">
+                  <div class="flex flex-col max-w-sm m-auto h-full bg-green-400 border-4 border-green-200 rounded overflow-hidden shadow-lg">
+                        <img class="w-40 h-40 m-auto" src="Images/othello.png" alt="othello">
+                        <div class="px-6 py-4">
+                          <div class="font-bold text-xl mb-2">Othello</div>
+                          <p class="text-gray-700 text-base h-60">
+                            "Othello" es un juego de estrategia para dos jugadores en un tablero de 8x8, donde el objetivo es tener más fichas de 
+                            tu color que el oponente al final del juego. Los jugadores colocan fichas alternativamente, tratando de rodear y voltear 
+                            las fichas del oponente para ganar terreno.
+                          </p>
+                        </div>
+                        <div class="px-6 pt-4 pb-2">
+                            <a href="othello.html" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Juega ahora!</a>
+                        </div>
+                      </div>
+
+                </div><!--/Othello-->
+
+                <!--Snake-->
+                <div  class="flex w-full p-10 text-center lg:w-1/3">
+                  <div class="flex flex-col max-w-sm m-auto h-full bg-blue-400 border-4 border-blue-200 rounded overflow-hidden shadow-lg">
+                        <img class="w-40 h-40 m-auto" src="Images/snake2.png" alt="Snake">
+                        <div class="px-6 py-4">
+                          <div class="font-bold text-xl mb-2">Snake</div>
+                          <p class="text-gray-700 text-base h-60">
+                            "Snake" es un juego clásico en el que controlas una serpiente que crece cada vez que come un objeto. 
+                            El objetivo es evitar chocar contra las paredes del juego o contra tu propia cola. Conforme la serpiente 
+                            crece, el juego se vuelve más desafiante.
+                          </p>
+                        </div>
+                        <div class="px-6 pt-4 pb-2 ">
+                          <a href="snake.html" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Juega ahora!</a>
+                        </div>
+                      </div>
+                </div><!--/Snake-->
+
+            </div><!--/Lista de juegos-->
+            
+            <!--Documentación-->
+            <div id="documentacion" class="mx-auto py-8 px-4 text-center w-5/6 border-2 border-black mt-5 md:w-2/3">
+              <h1 class="w-full text-3xl font-bold mb-10 bg-gray-900 text-white">Documentación del Proyecto</h1>
+          
+              <h2 class="text-2xl font-bold m-6">Miembros del Grupo:</h2>
+              <ul class="list-none font-semibold text-lg pl-6 mb-4">
+                  <li>Angela Serantes</li>
+                  <li>Catalin Hara</li>
+              </ul>
+          
+              <h2 class="text-xl font-semibold mt-10  bg-gray-800 text-white">Organización de la Entrega:</h2>
+              <ol class="list-none pl-6 mb-4 text-left">
+                  <li>
+                      <h3 class="text-lg font-semibold m-4">Fases y Planificación:</h3>
+                      <p class="mb-2">Dividimos el trabajo en tres etapas principales: analisís, diseño y planificación, implementación de los juegos y pruebas.</p>
+                      <p class="mb-2">Utilizamos aplicaciones como Discord y WhatsApp para comunicar en tiempo real y hacer un seguimiento del progreso.</p>
+                  </li>
+                  <li>
+                      <h3 class="text-lg font-semibold m-4">Repartición del Trabajo:</h3>
+                      <p class="mb-2">Ambos contribuimos al diseño y a la planificación de la página.</p>
+                      <p class="mb-2">Catalin se centró en el desarrollo de la página principal, del Quiz y del diseño del Snake junto con Ángela. También una de sus tareas ha 
+                        sido el aspecto responsive del sitio web.</p>
+                      <p class="mb-2">Angela trabajó en la logica del Othello y también del Snake, ayudando a resolver varios errores y asegurandose de que los juegos funcionen perfectamente.
+                        También ha trabajado en los estilos de los juegos para que sean similares. Se ha encargado del diseño de la "serpiente" del Snake y la "manzana".
+                      </p>
+                  </li>
+              </ol>
+          
+              <h2 class="text-xl font-semibold m-6 bg-gray-800 text-white">Estructura de la Página Web y de sus Páginas:</h2>
+              <p class="mb-4 text-left">La página principal coniene los tres juegos con una breve descripción de cada uno. Desde ella se puede llegar a las páginas de los demás juegos. Al final de la página se encuentra la documentación.
+                <br>
+                El "quiz" contiene un título y un rectángulo con la pregunta seguida de 4 respuestas diferentes, de las cuales solo una es correcta. Al acabar el quiz se muestra el número de puntos conseguidos y el tiempo que se ha tardado en acabarlo.
+                <br>
+                El "snake" tiene también un título y tiene un tablero que es donde se realiza el juego. Justo entre estos dos elementos se encuentra un marcador con una manzana dorada y otra roja. La manzana dorada guarda el highscore conseguido y la roja 
+                el score de la partida actual. Se considera que cada vez que la serpiente se come una manzana consigue un punto. Si pierde se reinicia el juego y el score pero se mantiene el highscore.
+                <br>
+                El "othello" sigue con la estructura de las dos páginas anteriores. Contiene un tablero y dos zonas con fichas. Las fichas de la izquierda son las blancas y las de la derecha son negras. Justo encima del tablero se encuentra un timer de 30 
+                segundos, que es el tiempo máximo que puede tardar el jugador en hacer un movimiento. Si no hace ningún movimiento, lo hará automáticamente el programa, poniendo una ficha en la primera casilla disponible que encuentre. El timer es un círculo, 
+                que será blanco si le tocan a las fichas blancas y negro en el caso de las fichas negras. Encima de los tacos de fichas hay un contador que muestra la puntuación de cada color después de cada movimiento. Al acabar la partida se borra el timer y 
+                en su lugar aparece el ganador de esa partida.
+              </p>
+          
+              <h2 class="text-xl font-semibold m-6 bg-gray-800 text-white">Explicación de los Juegos:</h2>
+              <ol class="list-none mb-4 text-left">
+                <li>
+                  <h3 class="text-lg font-semibold m-4">Quiz:</h3>
+                  <p class="mb-2">El juego consiste en acertar el mayor número de preguntas posibles de entre 4 opciones. Si no se contesta en 30 segundos, se pierde automáticamente el punto de esa pregunta y se acaba el quiz. Si se responde erróneamente también se acaba.</p>
+                </li>
+                <li>
+                  <h3 class="text-lg font-semibold m-4">Othello:</h3>
+                  <p class="mb-2">El objetivo del juego es tener la mayor cantidad de fichas de tu color cara
+                    arriba en el tablero al final del juego.</p>
+                  <p class="mb-2">Una jugada consiste en "flanquear" las fichas del oponente y, luego, darles la vuelta, para que se vuelvan de tu color.
+                    "Flanquear" significa poner una ficha en el tablero de modo que la fila (o filas) de fichas de tu oponente esté bordeada por una ficha
+                    de tu color en cada extremo. Una fila puede tener una o más fichas.</p>
+                  <h4 class="text-md font-semibold">Reglas: <a href="https://es.wikihow.com/jugar-a-Othello" class="font-normal text-blue-600 underline">cómo jugar al othello</a></h4>  
+                  <p class="mb-2">* En esta versión del othello las reglas son un poco diferentes, cuando en un turno no puedes "flanquearç2 ninguna ficha, en vez de saltar tu turno, puedes 
+                    poner en cualquier casilla. Este cambio de normas respecto a las reglas oficiales las he hecho porque así es como llevo jugando toda mi vida.</p>     
+                </li>
+                <li>
+                  <h3 class="text-lg font-semibold m-4">Snake:</h3>
+                  <p class="mb-2">Solo hay dos reglas que debes seguir cuando juegas: no te golpees contra una pared ni contra tu cuerpo. Chocar contra una pared o cuerpo terminará el juego inmediatamente. 
+                    El puntaje más alto se calcula en función de la cantidad de cuadrados que agregó a la serpiente.</p>
+                </li>
+              </ol>
+              
+              <h2 class="text-xl font-semibold m-6 bg-gray-800 text-white">Enfoque para Hacer Responsive el Quiz:</h2>
+              <p class="mb-4 text-left">Para garantizar la compatibilidad móvil/desktop del Quiz, hemos aplicado los principios de diseño responsive 
+                utilizando Tailwind CSS, al igual que en el resto del sitio. Utilizamos una media query de tamaño mediano (md) para definir estilos 
+                específicos para dispositivos móviles y de escritorio. Cada elemento, ya sea un div o texto, ha sido diseñado teniendo en cuenta 
+                el enfoque mobile-first, asegurando una experiencia de usuario consistente en todas las plataformas.</p>
+          
+              <h2 class="text-xl font-semibold m-6 bg-gray-800 text-white">Estructura del Código:</h2>
+              <p class="mb-4 text-left">Hemos intentado que es código de todos los juegos tenga la misma estructura. Empieza declarando las variables globales, 
+                luego tiene las funciones y al final el "main" o el código que hace empezar el juego. Hemos intentado hacer funciones específicas para poder reutilizarlas.</p>
+          
+              <h2 class="text-xl font-semibold m-6 bg-gray-800 text-white">Problemas Encontrados y Soluciones:</h2>
+              <p class="mb-4 text-left">El primer problema que nos encontramos tuvo que ver con el snake y con como guardar la ubicación de cada parte, conseguimos declararlo 
+                como un array de objetos, donde cada objeto es una parte del cuerpo de la serpiente y sus atributos son la posición en la que se encuentran en el tablero. Entendimos 
+                que lo podíamos considerar como una especie de cola ya que la cabeza va avanzando y se elimina la cola de la serpiente y así conseguimos que se moviera.</p>
+              <p class="mb-4 text-left">En el quiz no nos hemos encontrado problemas, y si los hemos encontrado eran muy simples y fáciles de solucionar, por lo que no los recordamos. </p>
+              <p class="mb-4 text-left">En el othello si que encontramos más problemas. Al automatizar movimientos no sabíamos cómo coger una ficha del taco y ponerla sin usar el drag pero 
+                simplemente dividimos una función en dos para que fueran más generales y conseguimos que funcionara. Un error que no hemos podido resolver es que cuesta hacer drag en las fichas, 
+                a veces hay que repetir el movimiento hasta que funciona el drag. Tras investigar no supimos arreglarlo.</p>
+              <h2 class="text-xl font-semibold m-6 bg-gray-800 text-white">Posibles Mejoras:</h2>
+              <p class="mb-4 text-left">En un futuro podríamos mejorar el quiz para que tuviera múltiple respuesta o incluso respuestas de escribir. El snake podría tener varios niveles con tamaños 
+                distintos de tablero e incluso animación de la serpiente. En cuanto al othello, se podría hacer de uno o dos jugadores, el de dos jugadores sería el actual, pero también se podría jugar 
+                contra la máquina.</p>
+          </div>
+            
+            
+            
+            
+        </div><!--/Main-->
+
+    </div><!--/Container-->
+    
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Othello</title>
+    <style>
+        #tablero{
+            display: grid;
+            grid-template-columns: repeat(8, 55px);
+            grid-template-rows: repeat(8, 55px);
+            margin: auto auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.336);
+            background-color: rgb(36, 36, 36);
+            
+        }
+    </style>
+</head>
+<body>
+    <!--Container-->
+    <div class="flex flex-col bg-green-300 h-screen">
+        <!--Header-->
+        <div class="text-center w-full justify-items-center">
+            <h1 class="block text-5xl font-bold shadow-2xl bg-green-500 text-green-900 p-2">Othello</h1>            
+        </div><!--/Header-->
+
+        <!--Timer / Winner part-->
+        <div id="ganador" class="mx-auto my-2">
+            <p id="timer" class="text-4xl border-4 rounded-full p-4 w-20 bg-white text-center">30</p>
+        </div><!--/Timer Timer / Winner part-->
+
+        <!--Main-->
+        <div class="flex my-auto">
+            <!--Zona blanca-->
+            <div id="zonaBlanca" class="flex flex-col justify-between w-full">
+                <!--White score-->
+                <div class="flex w-full mx-auto">
+                    <div class="h-10 w-10 bg-white rounded-full m-2 ml-auto border-2 border-black"></div>
+                    <p id="whiteScore" class="text-3xl mr-auto my-auto min-w-8 text-right">2</p>
+                </div><!--/White score-->
+
+                <!--Fichas blancas-->
+                <div id="white" class="flex mx-auto">
+                </div><!--Fichas blancas-->
+
+            </div><!--/Zona blanca-->
+            
+        
+            <!--Tablero-->
+            <div id="tablero">
+            </div><!--/Tablero-->
+
+            <!--Zona negra-->
+            <div id="zonaBlanca" class="flex flex-col justify-between w-full">
+                <!--Black score-->
+                <div class="flex w-full mx-auto">
+                    <div class="h-10 w-10 bg-black rounded-full m-2 ml-auto"></div>
+                    <p id="blackScore" class="text-3xl mr-auto my-auto min-w-8 text-right">2</p>
+                </div><!--/Black score-->
+
+                <!--Fichas negras-->
+                <div id="black" class="flex mx-auto">
+                </div><!--Fichas negras-->
+
+            </div><!--/Zona negra-->
+
+        </div><!--/Main-->
+
+    </div><!--/Container-->
+
+    <script>
+        /* VARIABLES */
+        // Matriz que guarda las fichas puestas en el tablero (negro=true, blanco=false)
+        let fPuestas =[
+            [,,,,,,,], //0
+            [,,,,,,,], //1
+            [,,,,,,,], //2
+            [,,,false,true,,,], //3
+            [,,,true,false,,,], //4
+            [,,,,,,,], //5
+            [,,,,,,,], //6
+            [,,,,,,,] //7
+        ];
+        // Matriz que guarda las posibles casillas en donde el jugador podrá poner una ficha (true -> puede poner, false -> no puede poner)
+        let fDisponibles=[
+            [,,,,,,,], //0
+            [,,,,,,,], //1
+            [,,,,,,,], //2
+            [,,,,,,,], //3
+            [,,,,,,,], //4
+            [,,,,,,,], //5
+            [,,,,,,,], //6
+            [,,,,,,,] //7
+        ];
+        // Variable que guarda de quién es el turno actual en el juego. true=negro y false=blanco
+        let turno=false;
+        // Variable que guarda si el jugador tiene o no casillas donde poner su ficha
+        let puedePoner=false;
+        
+        let whiteScore=document.getElementById("whiteScore"); // Elemento que guarda el score de las fichas blancas
+        let blackScore=document.getElementById("blackScore"); // Elemento que guarda el score de las fichas negras
+
+        let numBlancas=0;
+        let numNegras=0; 
+
+        let fichasTurno=0;
+
+        let segs;
+
+        let timer=document.getElementById("timer");
+
+        let intervalo;
+
+        // Creación del tablero
+        let tablero=document.getElementById("tablero");        
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                let cuadro=document.createElement("div");
+                cuadro.className="col-span-1 row-span-1 bg-green-600 border-2 border-black";
+                cuadro.id="c"+i+""+j; // Los ids de los cuadrados se forman por una "c" y el nº de fila y columna en la que está
+                // Evento que devuelve la casilla a su color original depués de que un elemento pase por encima suyo
+                tablero.appendChild(cuadro);
+            }
+        }
+
+        // Se colocan las 4 fichas con las que inicia el juego
+        for(let i=0; i< 2; i++){
+            for(let j=0; j< 2; j++){
+                // Ficha
+                let ficha=document.createElement("div");
+                let ide="c"+(3+i)+""+(3+j);
+                let pos=document.getElementById(ide);
+                if((i+j)%2==0){
+                    // Ficha blanca
+                    ficha.className="w-full h-full rounded-full bg-white";
+                    numBlancas++;
+                } else{
+                    // Ficha negra
+                    ficha.className="w-full h-full rounded-full bg-black";
+                    numNegras++;
+                }
+                // Se coloca la ficha
+                pos.appendChild(ficha);
+            }
+        }
+
+        // Creación de los tacos de fichas (3 tacos x 10 fichas cada uno)
+        function crearTaco(color, border){
+            let zona=document.getElementById(color);
+            for(let i=0; i<3; i++){
+                let taco=document.createElement("div");
+                taco.className="flex flex-col-reverse m-2";
+                taco.style.width="55px";
+                zona.appendChild(taco);
+                for(let f=0; f<10; f++){
+                    let ficha=document.createElement("div");
+                    ficha.className="f"+color+" h-6 border-2 border-b-8 rounded-md border-"+border+" bg-"+color;
+                    ficha.style.width="55px";
+                    ficha.id="f"+color+""+i+""+f;
+                    taco.appendChild(ficha);
+                }
+            }
+        }
+
+        function actualizarScore(){
+            // Si han puesto las negras
+            if (turno){
+                numNegras = numNegras + fichasTurno;
+                numBlancas = numBlancas - (fichasTurno - 1);
+            } 
+            // Si han puesto las blancas
+            else {
+                numBlancas = numBlancas + fichasTurno;
+                numNegras = numNegras - (fichasTurno - 1);
+            }
+            blackScore.innerHTML=numNegras;
+            whiteScore.innerHTML=numBlancas;
+        }
+
+        function cambiarTurno(){
+            /* Antes de cambiar de turno se comprueba si la suma de las fichas blancas y las fichas negras es igual a 64, 
+             * lo que significa que todas las casillas están ocupadas y que ha acabado la partida */
+            if (numBlancas + numNegras == 64) {
+                acabarPartida();
+            } else {
+                turno=!turno;
+                // Se reinicia el timer
+                reiniciarTimer();
+                // Al cambiar de turno, se reinicia la variable que guarda cuantas fichas cambian en ese turno
+                fichasTurno=0;
+                let tacoActual;
+                let turnoActual=[];
+                let turnoAnterior=[];
+                // Si le toca a las negras
+                if(turno){
+                    turnoActual=document.getElementsByClassName("fblack");
+                    turnoAnterior=document.getElementsByClassName("fwhite");
+                } 
+                // Si le toca a las blancas
+                else {
+                    turnoActual=document.getElementsByClassName("fwhite");
+                    turnoAnterior=document.getElementsByClassName("fblack");
+                }
+                // A las fichas del turno actual se les añade el evento drag
+                for(let i=0; i<turnoActual.length;i++){
+                    turnoActual[i].addEventListener("dragstart", drag_st);
+                    turnoActual[i].addEventListener("dragend", drag_end);
+                    turnoActual[i].style.cursor="pointer";
+                }
+                // A las fichas del otro turno se les quita el evento drag (así no pueden usar sus fichas en el turno del otro)
+                for(let i=0; i<turnoAnterior.length;i++){
+                    turnoAnterior[i].removeEventListener("dragstart", drag_st);
+                    turnoAnterior[i].removeEventListener("dragend", drag_end);
+                    turnoAnterior[i].style.cursor="not-allowed";
+                }
+                estaDisponible();
+            }
+        }
+
+        // Al inicio del drag se cambia el color de fondo de la ficha seleccionada
+        function drag_st(e){
+            e.dataTransfer.setData('text/plain', e.target.id);
+            e.target.style.backgroundColor="grey";
+        }
+
+        // Al soltar la ficha , si no cae en drop, vuelve a su color original
+        function drag_end(){
+            this.style.backgroundColor="";
+        }
+
+        // Función que colorea la casilla si se puede poner ahí
+        function enterDisponible(e){
+            e.preventDefault();
+            e.target.style.backgroundColor="green";
+        }
+
+        function enterNoDisponible(e){
+            e.target.style.backgroundColor="red";
+        }
+
+        // Función que devuelve la casilla a su color original
+        function leaveCasilla(e){
+            e.target.style.backgroundColor="";
+        }
+
+        crearTaco("white", "black");
+        crearTaco("black", "white");
+        cambiarTurno();
+
+        // Funcion que analiza si las posiciones del tablero están o no vacías
+        function estaDisponible(){
+            puedePoner=false;
+            // Doble bucle que recorre cada una de las casillas del tablero (8x8)
+            for(let i=0; i<8; i++){
+                for(let j=0; j<8; j++){
+                    // Se comprueba si la casilla seleccionada está vacía
+                    if(typeof fPuestas[i][j]=="undefined"){
+                        // Se comprueba alrededor de la casilla vacia (3x3) para ver si está tocando con una ficha del color contrario
+                        fDisponibles[i][j]=buscarAlrededor(i,j);
+                    } else {
+                        // Si la casilla no está vacía, no se puede poner ahí una ficha
+                        fDisponibles[i][j]=false;
+                    }
+                    // Se crea una variable que guarde la casilla
+                    let casilla=document.getElementById("c"+i+""+j);
+                    // Dependiendo de si es una casilla disponible o no se le añade o quita el evento de poder poner la ficha en esa posición
+                    if(fDisponibles[i][j]){
+                        puedePoner=true;
+                        setDisponible(casilla);
+                    } else if(typeof fPuestas[i][j]=="undefined"){
+                        setNoDisponible(casilla);
+                    }
+                }
+            }
+            // En caso de que el jugador no pueda hacer ningún sandwich, puede poner en cualquier casilla
+            if (!puedePoner){
+                for(let i=0; i<8; i++){
+                    for(let j=0; j<8; j++){
+                        let casilla=document.getElementById("c"+i+""+j);
+                        if(typeof fPuestas[i][j]=="undefined"){
+                            marcarCasillaDisponible(i, j);
+                            fDisponibles[i][j]=true;
+                            setDisponible(casilla);   
+                        } else {
+                            fDisponibles[i][j]=false;
+                        }
+                                            
+                    }
+                }
+            }
+        }
+
+        function setDisponible(casilla){
+            // Se quitan los eventos relacionados a las casillas no disponibles
+            casilla.removeEventListener("dragenter", enterNoDisponible);
+            casilla.removeEventListener("dragover", enterNoDisponible);
+            casilla.removeEventListener("dragleave", leaveCasilla);
+            // Se le añaden los eventos relacionados a las casillas disponibles
+            casilla.firstChild.addEventListener("dragenter", enterDisponible);
+            casilla.firstChild.addEventListener("dragover", enterDisponible);
+            casilla.firstChild.addEventListener("dragleave", leaveCasilla)
+            casilla.firstChild.addEventListener("drop", ponerFicha);
+        }
+
+        function setNoDisponible(casilla){
+            // Se eliminan los eventos relacionados a las casillas disponibles
+            casilla.removeEventListener("dragover", enterDisponible);
+            casilla.removeEventListener("dragenter", enterDisponible);
+            // Se añaden los eventos relacionados con las casillas no disponibles
+            casilla.addEventListener("dragenter", enterNoDisponible);
+            casilla.addEventListener("dragover", enterNoDisponible);
+            casilla.addEventListener("dragleave", leaveCasilla);
+        }
+
+
+        // Función que busca alrededor de la casilla para ver si está tocando una ficha del color contrario al del turno
+        function buscarAlrededor(i, j){
+            // Se comprueba alrededor de la casilla (3x3) para ver si está tocando con una ficha del color contrario
+            for(let fila=i-1; fila<=i+1 && fila<8; fila++){
+                for(let col=j-1; col<=j+1 && col<8; col++){
+                    // Comprobar que los indices no salen del tablero
+                    if(fila>=0 && col>=0 && !(fila==i && col==j)){
+                        /* Si una casilla contigua es del color contrario al color del jugador de ese turno, tendrá posibilidad 
+                            * de hacer sandwich, por lo que se llama a la funcion comprobar sandwich para ver si la en casilla se 
+                            * podrá poner una ficha */
+                        if(fPuestas[fila][col]==(!turno)){
+                            /* Se llama a la función con la posición contigua a la casilla que queremos comprobar y con la regla a seguir para 
+                            * buscar en línea. Ej, horizontal hacia la derecha: fila-i=0 para continuar en la fila y col-j=1 para avanzar columna 
+                            * a columna hacia la derecha*/
+                            if(comprobarSandwich(fila, col, fila-i, col-j)){
+                                /* Si la casilla está disponible, se permitirá un drop y se dibujará una circunferencia en esa casilla para marcar 
+                                 * que se puede poner ficha en ella*/
+                                marcarCasillaDisponible(i,j);
+                                return true;
+                            }
+                        } 
+                    }
+                }
+            }
+            return false;
+        }
+
+        /* Función que busca si en una linea (horizontal, vertical o diagonal dependiendo de la opX y opY) 
+         * se encuentra en algún momento una ficha del color del turno actual justo después de una o varias fichas del color opuesto seguidas*/
+        function comprobarSandwich(x, y, opX, opY){
+            // Mientras que la posición a buscar no se salga del tablero 
+            while((x+opX >=0 && x+opX<8) && (y+opY >=0 && y+opY<8)){
+                x+=opX;
+                y+=opY;
+                // Si se encuentra con una ficha que haga sandwich, en la casilla comprobada se podrá poner ficha porque estará disponible
+                if(fPuestas[x][y]==turno){
+                    return true;   
+                }
+                // Si la casilla buscada está vacía y no se ha hecho sandwich todavía, la casilla original no tendrá disponibilidad
+                else if(typeof fPuestas[x][y]=="undefined"){
+                    return false;
+                }
+            }
+            // Si se recorre todo el tablero y son todas las fichas del color opuesto sin hacer sandwich, la casilla original no tendrá disponibilidad
+            return false;
+        }
+
+        // Función que pinta la casilla con un circulo del color del jugador de ese turno
+        function marcarCasillaDisponible(i,j){
+            let casilla=document.getElementById("c"+i+""+j);
+            let circulo=document.createElement("div");
+            // Turno negro
+            if(turno){
+                circulo.className="disponible w-full h-full border-2 rounded-full border-black";
+            // Turno blanco
+            }else{
+                circulo.className="disponible w-full h-full border-2 rounded-full border-white";
+            }
+            casilla.appendChild(circulo);
+        }
+
+        function limpiarTablero(){
+            for(let i=0; i<8; i++){
+                for(let j=0; j<8; j++){
+                    if(typeof fPuestas[i][j]=="undefined"){
+                        let casilla=document.getElementById("c"+i+""+j);
+                        casilla.innerHTML="";
+                    }
+                }
+            }
+        }
+
+        function ponerFicha(e){
+            let i=e.target.parentElement.id.substring(1,2);
+            let j=e.target.parentElement.id.substring(2,3);
+            let id=e.dataTransfer.getData("text/plain");
+            pintarTurno(i, j, id);
+        }
+
+        function pintarTurno(i, j, id){
+            // Antes de poner la ficha, se limpia el tablero para que una casilla no tenga varios hijos (la ficha y la circunferencia)
+            limpiarTablero();
+            // Compruebo las casillas de alrededor de la casilla seleccionada
+            for(let fila=i-1; fila<=i+1 && fila<8; fila++){
+                for(let col=j-1; col<=j+1 && col<8;col++){
+                    if(fila>=0 && col>=0 && !(fila==i && col==j)){
+                        if(typeof fPuestas[fila][col]!="undefined"){
+                            if(fPuestas[fila][col]==!turno){
+                                if(comprobarSandwich(fila, col, fila-i, col-j)){
+                                    pintarSandwich(fila, col, fila-i, col-j);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Se elimina la ficha del taco de fichas
+            let ficha= document.getElementById(id);
+            ficha.parentNode.removeChild(ficha);
+            // Se pinta la ficha en el tablero
+            pintarFicha(i,j);
+            fPuestas[i][j]=turno;
+            // Al acabar de pintar el turno se actualiza el número de fichas que tiene cada color puestas en el tablero
+            actualizarScore();
+            // Se cambia de turno
+            cambiarTurno();
+        }
+
+        function pintarSandwich(x, y, opX, opY){
+            while(fPuestas[x][y]==!turno){
+                pintarFicha(x,y);
+                x+=opX;
+                y+=opY;
+            }
+        }
+
+        function pintarFicha(x,y){
+            let ficha=document.createElement("div");
+            // Turno negro
+            if(turno){
+                ficha.className="w-full h-full rounded-full bg-black";
+            // Turno blanco
+            }else{
+                ficha.className="w-full h-full rounded-full bg-white";
+            }
+            let casilla=document.getElementById("c"+x+""+y);
+            casilla.innerHTML="";
+            casilla.appendChild(ficha);
+            fPuestas[x][y]=turno;
+            fichasTurno+=1;
+        }
+
+        function acabarPartida() {
+            // Se acaba el timer
+            clearInterval(intervalo);
+            let zona = document.getElementById("ganador");
+            ganador.innerHTML=""; // Se vacía el html que guarda el timer
+            let 
+            
+        }
+
+        function reiniciarTimer() {
+            clearInterval(intervalo);
+            segs=30;
+            timer.innerHTML="30";
+            timer.style.color="";
+            // Turno negro
+            if(turno) {
+                timer.style.backgroundColor="rgb(36, 36, 36)";
+                timer.style.borderColor="black";
+                timer.style.color="white";
+            } 
+            // Turno blanco
+            else {
+                timer.style.backgroundColor="";
+                timer.style.borderColor="";
+                timer.style.color="";
+            }
+            intervalo=setInterval(actualizarTimer, 1000)
+        }
+
+        function actualizarTimer() {
+            segs--;
+            if (segs>10) {
+                timer.innerHTML=segs;
+            } else if (segs>0) {
+                timer.style.color="red";
+                timer.innerHTML=segs;
+            } else {
+                // Cuando el jugador no pone ficha en 30s se pone automaticamente
+                turnoAutomatico();
+            }
+        }
+
+        function turnoAutomatico() {
+            let zona = document.getElementById(turno?"black":"white");
+            for(let i=0; i<8; i++){
+                for(let j=0; j<8; j++){
+                    if(fDisponibles[i][j]==true){
+                        // Se selecciona la primera ficha del taco para poner 
+                        for(let taco of zona.children){
+                            if (taco.children.length > 0) {
+                                let id = taco.firstChild.id;
+                                pintarTurno(i, j, id);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
